@@ -1,5 +1,5 @@
-resource "azurerm_cdn_frontdoor_firewall_policy" "cdn_frontdoor_firewall_policys" {
-  for_each = var.cdn_frontdoor_firewall_policys
+resource "azurerm_cdn_frontdoor_firewall_policy" "cdn_frontdoor_firewall_policies" {
+  for_each = var.cdn_frontdoor_firewall_policies
 
   mode                                      = each.value.mode
   name                                      = each.value.name

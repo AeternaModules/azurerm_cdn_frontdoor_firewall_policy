@@ -1,3 +1,7 @@
+output "cdn_frontdoor_firewall_policies_id" {
+  description = "Map of id values across all cdn_frontdoor_firewall_policies, keyed the same as var.cdn_frontdoor_firewall_policies"
+  value       = { for k, v in azurerm_cdn_frontdoor_firewall_policy.cdn_frontdoor_firewall_policies : k => v.id }
+}
 output "cdn_frontdoor_firewall_policies_captcha_cookie_expiration_in_minutes" {
   description = "Map of captcha_cookie_expiration_in_minutes values across all cdn_frontdoor_firewall_policies, keyed the same as var.cdn_frontdoor_firewall_policies"
   value       = { for k, v in azurerm_cdn_frontdoor_firewall_policy.cdn_frontdoor_firewall_policies : k => v.captcha_cookie_expiration_in_minutes }

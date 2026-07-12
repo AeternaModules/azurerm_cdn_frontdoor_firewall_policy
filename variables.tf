@@ -148,7 +148,7 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.cdn_frontdoor_firewall_policies : (
-        length(v.log_scrubbing.scrubbing_rule) <= 100
+        v.log_scrubbing == null || (length(v.log_scrubbing.scrubbing_rule) <= 100)
       )
     ])
     error_message = "Each scrubbing_rule list must contain at most 100 items"
@@ -180,7 +180,7 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.cdn_frontdoor_firewall_policies : (
-        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.exclusion == null || (length(item.exclusion) <= 100))])
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (item.exclusion == null || (length(item.exclusion) <= 100))]))])
       )
     ])
     error_message = "Each exclusion list must contain at most 100 items"
@@ -188,7 +188,7 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.cdn_frontdoor_firewall_policies : (
-        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.rule == null || (length(item.rule) <= 1000))])
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (item.rule == null || (length(item.rule) <= 1000))]))])
       )
     ])
     error_message = "Each rule list must contain at most 1000 items"
@@ -196,26 +196,10 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.cdn_frontdoor_firewall_policies : (
-        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.exclusion == null || (length(item.exclusion) <= 100))])
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (item.rule == null || alltrue([for item in item.rule : (item.exclusion == null || (length(item.exclusion) <= 100))]))]))])
       )
     ])
     error_message = "Each exclusion list must contain at most 100 items"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.cdn_frontdoor_firewall_policies : (
-        v.js_challenge_cookie_expiration_in_minutes == null || (v.js_challenge_cookie_expiration_in_minutes >= 5 && v.js_challenge_cookie_expiration_in_minutes <= 1440)
-      )
-    ])
-    error_message = "must be between 5 and 1440"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.cdn_frontdoor_firewall_policies : (
-        v.captcha_cookie_expiration_in_minutes == null || (v.captcha_cookie_expiration_in_minutes >= 5 && v.captcha_cookie_expiration_in_minutes <= 1440)
-      )
-    ])
-    error_message = "must be between 5 and 1440"
   }
   # --- Unconfirmed validation candidates, derived from azurerm_cdn_frontdoor_firewall_policy's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
@@ -241,6 +225,12 @@ EOT
   #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
   # path: mode
   #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: js_challenge_cookie_expiration_in_minutes
+  #   condition: value >= 5 && value <= 1440
+  #   message:   must be between 5 and 1440
+  # path: captcha_cookie_expiration_in_minutes
+  #   condition: value >= 5 && value <= 1440
+  #   message:   must be between 5 and 1440
   # path: redirect_url
   #   source:    validation.IsURLWithScheme(...) - no translation rule yet, add one
   # path: custom_block_response_status_code

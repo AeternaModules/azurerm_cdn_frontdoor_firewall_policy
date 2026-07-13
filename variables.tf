@@ -69,34 +69,34 @@ EOT
     captcha_cookie_expiration_in_minutes      = optional(number)
     custom_block_response_body                = optional(string)
     custom_block_response_status_code         = optional(number)
-    enabled                                   = optional(bool) # Default: true
+    enabled                                   = optional(bool)
     js_challenge_cookie_expiration_in_minutes = optional(number)
     redirect_url                              = optional(string)
-    request_body_check_enabled                = optional(bool) # Default: true
+    request_body_check_enabled                = optional(bool)
     tags                                      = optional(map(string))
     custom_rule = optional(list(object({
       action  = string
-      enabled = optional(bool) # Default: true
+      enabled = optional(bool)
       match_condition = optional(list(object({
         match_values       = list(string)
         match_variable     = string
-        negation_condition = optional(bool) # Default: false
+        negation_condition = optional(bool)
         operator           = string
         selector           = optional(string)
         transforms         = optional(list(string))
       })))
       name                           = string
-      priority                       = optional(number) # Default: 1
-      rate_limit_duration_in_minutes = optional(number) # Default: 1
-      rate_limit_threshold           = optional(number) # Default: 10
+      priority                       = optional(number)
+      rate_limit_duration_in_minutes = optional(number)
+      rate_limit_threshold           = optional(number)
       type                           = string
     })))
     log_scrubbing = optional(object({
-      enabled = optional(bool) # Default: true
+      enabled = optional(bool)
       scrubbing_rule = list(object({
-        enabled        = optional(bool) # Default: true
+        enabled        = optional(bool)
         match_variable = string
-        operator       = optional(string) # Default: "Equals"
+        operator       = optional(string)
         selector       = optional(string)
       }))
     }))
@@ -115,7 +115,7 @@ EOT
         })))
         rule = optional(list(object({
           action  = string
-          enabled = optional(bool) # Default: false
+          enabled = optional(bool)
           exclusion = optional(list(object({
             match_variable = string
             operator       = string
@@ -148,10 +148,10 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.cdn_frontdoor_firewall_policies : (
-        v.log_scrubbing == null || (length(v.log_scrubbing.scrubbing_rule) <= 100)
+        v.log_scrubbing == null || (length(v.log_scrubbing.scrubbing_rule) >= 1 && length(v.log_scrubbing.scrubbing_rule) <= 100)
       )
     ])
-    error_message = "Each scrubbing_rule list must contain at most 100 items"
+    error_message = "Each scrubbing_rule list must contain between 1 and 100 items"
   }
   validation {
     condition = alltrue([

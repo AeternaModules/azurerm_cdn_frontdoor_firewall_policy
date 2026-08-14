@@ -32,7 +32,7 @@ output "cdn_frontdoor_firewall_policies_js_challenge_cookie_expiration_in_minute
 }
 output "cdn_frontdoor_firewall_policies_log_scrubbing" {
   description = "Map of log_scrubbing values across all cdn_frontdoor_firewall_policies, keyed the same as var.cdn_frontdoor_firewall_policies"
-  value       = { for k, v in azurerm_cdn_frontdoor_firewall_policy.cdn_frontdoor_firewall_policies : k => v.log_scrubbing if v.log_scrubbing != null && length(v.log_scrubbing) > 0 }
+  value       = { for k, v in azurerm_cdn_frontdoor_firewall_policy.cdn_frontdoor_firewall_policies : k => one(v.log_scrubbing) if v.log_scrubbing != null && length(v.log_scrubbing) > 0 }
 }
 output "cdn_frontdoor_firewall_policies_managed_rule" {
   description = "Map of managed_rule values across all cdn_frontdoor_firewall_policies, keyed the same as var.cdn_frontdoor_firewall_policies"
